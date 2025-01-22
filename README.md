@@ -27,6 +27,12 @@
 
 ## API Endpoint using curl
 
+Open new terminal
+
+```bash
+   cd Predictive_Analysis_for_Manufacturing_Operations
+   ```
+
 ### 1. Root Endpoint
 #### **GET /**
 - **Description**: Check if the API is running.
