@@ -47,7 +47,7 @@ def train_model():
         f1 = f1_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
 
-        return {"accuracy": accuracy, "f1_score": f1, "recall": recall}
+        return {"accuracy": round(accuracy,2), "f1_score": round(f1,2) , "recall": round(recall,2)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to train model: {str(e)}")
 
