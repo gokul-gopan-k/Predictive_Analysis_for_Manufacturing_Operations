@@ -1,26 +1,66 @@
 import joblib
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, f1_score, recall_score
-from .config import MODEL_PATH, SCALER_PATH
-from .preprocessing import filter_outliers
+from config import MODEL_PATH, SCALER_PATH
+from preprocessing import filter_outliers
+from fastapi import HTTPException
 
+
+data= None
 model = None
 scaler = None
 
 def upload_data(file):
-    global model, scaler
+    global data
     try:
         data = pd.read_csv(file.file)
-        # Preprocess and validate data here
-        return {"message": "File uploaded successfully"}
+
+        # Drop unnecessary columns
+        data = data.drop(["Date", "Machine_ID", "Assembly_Line_No"], axis=1, errors="ignore")
+
+        # Rename columns
+        data = data.rename(columns={
+            "Hydraulic_Oil_Temperature(?C)": "Hydraulic_Oil_Temperature",
+            "Spindle_Bearing_Temperature(?C)": "Spindle_Bearing_Temperature",
+            "Coolant_Temperature(?C)": "Coolant_Temperature",
+            "Spindle_Vibration(?m)": "Spindle_Vibration",
+            "Tool_Vibration(?m)": "Tool_Vibration",
+            "Spindle_Speed(RPM)": "Spindle_Speed",
+            "Voltage(volts)": "Voltage",
+            "Torque(Nm)": "Torque",
+            "Cutting(kN)": "Cutting",
+            "Hydraulic_Pressure(bar)": "Hydraulic_Pressure",
+            "Coolant_Pressure(bar)": "Coolant_Pressure",
+            "Air_System_Pressure(bar)": "Air_System_Pressure"
+        })
+
+        # Replace values in the "Downtime" column
+        data["Downtime"] = data["Downtime"].replace({"No_Machine_Failure": 1, "Machine_Failure": 0})
+
+        # Validate the presence of required columns
+        required_columns = {"Hydraulic_Pressure", "Coolant_Pressure", "Air_System_Pressure",
+                            "Coolant_Temperature", "Hydraulic_Oil_Temperature", "Spindle_Bearing_Temperature",
+                            "Spindle_Vibration", "Tool_Vibration", "Spindle_Speed", "Voltage", "Torque", "Cutting", "Downtime"}
+        missing_columns = required_columns - set(data.columns)
+        if missing_columns:
+            raise HTTPException(status_code=400, detail=f"CSV must contain columns: {missing_columns}")
+
+        # Fill missing values with column means
+        for col in required_columns:
+            if data[col].isnull().any():
+                data[col].fillna(data[col].mean(), inplace=True)
+
+        return {"message": "File uploaded successfully", "rows": len(data), "columns": list(data.columns)}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
 
 def train_model():
-    global model, scaler
+    global data, model, scaler
     try:
         data_filtered = filter_outliers(data, "Hydraulic_Pressure")
         feature_columns = ["Hydraulic_Pressure", "Coolant_Pressure", "Air_System_Pressure", "Coolant_Temperature", 
