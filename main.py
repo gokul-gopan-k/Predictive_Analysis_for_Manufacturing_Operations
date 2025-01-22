@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile
-from .models import upload_data, train_model, predict
-from .schemas import PredictInput
+from models import upload_data, train_model, predict as model_predict
+from schemas import PredictInput
 
 app = FastAPI()
 
@@ -18,4 +18,4 @@ def train():
 
 @app.post("/predict")
 def predict(input_data: PredictInput):
-    return predict(input_data)
+    return model_predict(input_data)
