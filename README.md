@@ -4,8 +4,8 @@
 
 1. **Clone the Repository**
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/gokul-gopan-k/Predictive_Analysis_for_Manufacturing_Operations.git
+   cd cd Predictive_Analysis_for_Manufacturing_Operations
    ```
 
 2. **Create a Virtual Environment**
