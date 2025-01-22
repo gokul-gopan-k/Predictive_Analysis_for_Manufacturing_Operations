@@ -22,7 +22,7 @@
 
 4. **Run the Application**
    ```bash
-   uvicorn main:app --host 127.0.0.1 --port 8000
+   uvicorn predictive_api:app --host 127.0.0.1 --port 8000
    ```
 
 ## API Endpoint using curl
@@ -53,7 +53,7 @@
   curl -X 'POST' \
   'http://127.0.0.1:8000/upload' \
   -H 'accept: application/json' \
-  -F 'file=@<your-dataset.csv>'
+  -F 'file=@Machine Downtime.csv'
   ```
 - **Response** (success):
   ```json
