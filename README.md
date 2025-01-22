@@ -10,7 +10,7 @@
 
 2. **Create a Virtual Environment**
    ```bash
-   python3 -m venv env
+   python -m venv env
    source env/bin/activate   # For Linux/MacOS
    env\Scripts\activate    # For Windows
    ```
