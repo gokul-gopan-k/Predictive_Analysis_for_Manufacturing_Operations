@@ -22,7 +22,7 @@
 
 4. **Run the Application**
    ```bash
-   uvicorn predictive_api:app --host 127.0.0.1 --port 8000
+   uvicorn main:app --host 127.0.0.1 --port 8000
    ```
 
 ## API Endpoint using curl
